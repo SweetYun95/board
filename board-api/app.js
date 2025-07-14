@@ -10,11 +10,17 @@ require(`dotenv`).config()
 const indexRouter = require('./routes/index')
 const boardRouter = require('./routes/board')
 const memberRouter = require('./routes/member')
+const { sequelize } = require(`./models`)
 
 const app = express()
 app.set(`port`, process.env.PORT || 3000)
 
 // 시퀼라이져 DB 연결 할 곳
+sequelize.sync({ force: false }).then(() => {
+   console.log(`시퀄라이즈로 DB연결 됨`)
+}).catch((err) => {
+   console.error('DB연결 실패',err)
+})
 
 // 공통 미들웨어
 app.use(morgan(`dev`))
