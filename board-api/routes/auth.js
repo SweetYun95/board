@@ -49,4 +49,54 @@ router.post('/join', async (req, res, next) => {
    }
 })
 
+// 로그인 localhost:8000/auth/login
+router.post('/login', async (req, res, next) => {
+   passport.authenticate('local', (authError, user, info) => {
+      if (authError) {
+         authError.status = 500
+         authError.message = `인증 중 오류 발생`
+         return next(authError)
+      }
+      if (user) {
+         const err = new Error(info.message || `로그인 실패`)
+         err.status = 401
+         return next(err)
+      }
+      req.login(user, (loginError) => {
+         if (loginError) {
+            loginError.status = 500
+            loginError.message = `로그인 중 오류 발생`
+            return next(loginError)
+         }
+
+         res.status(200).json({
+            success: true,
+            message: `로그인 성공`,
+            user: {
+               id: user.id,
+               name: user.name,
+            },
+         })
+      })
+   })(req, res, next)
+})
+
+// 로그아웃 localhost:8000/auth/logout
+router.get('/logout', async (req, res, next) => {
+   req.logout((logoutError) => {
+      if (logoutError) {
+         logoutError.status = 500
+         logoutError.message = `로그아웃 중 오류 발생`
+         return next(logoutError)
+      }
+      res.status(200).json({
+         success: true,
+         message:'로그아웃 되었습니다.'
+      })
+   })
+})
+
+// 로그인 상태확인 localhost:8000/auth/status
+
+
 module.exports = router
