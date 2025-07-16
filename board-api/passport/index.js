@@ -1,6 +1,6 @@
 const passport = require('passport')
 const local = require('./localStrategy')
-const Member = require('../models/member') // User가 아닌 Member로 통일
+const Member = require('../models/member')
 
 module.exports = () => {
    passport.serializeUser((user, done) => {
