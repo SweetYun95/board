@@ -1,4 +1,4 @@
-import { Card, CardContent, CardActions, Typography, Button, Grid } from '@mui/material'
+import { Card, CardMedia, CardContent, CardActions, Typography, Button, Grid } from '@mui/material'
 
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -26,8 +26,8 @@ const PostList = () => {
                <Card>
                   <CardContent>
                      <Typography variant="h6">{post.title}</Typography>
+                     <CardMedia sx={{ height: 240 }} image={`${import.meta.env.VITE_APP_API_URL}${post.img}`} title={post.content} />
                      <Typography variant="body2">{post.content}</Typography>
-                     {post.image && <img src={`http://localhost:8000/uploads/${post.image}`} alt="preview" style={{ width: '100%', marginTop: 8 }} />}
                      <Typography variant="caption" display="block" gutterBottom>
                         작성자: {post.Member?.name} / {new Date(post.createdAt).toLocaleString()}
                      </Typography>
