@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { joinUser, loginUser, logoutUser, checkAuthStatus } from '../api/boardApi'
+import { joinUser, loginUser, logoutUser,  } from '../api/boardApi'
 
 // 회원가입
 export const joinUserThunk = createAsyncThunk(`auth/joinUserThunk`, async (userData, { rejectWithValue }) => {
    try {
       console.log('👪 userData: ', userData)
       const response = await joinUser(userData)
-      return response
+      return response.data.user
    } catch (error) {
       return rejectWithValue(error.respon?.data?.message)
    }
@@ -16,7 +16,7 @@ export const joinUserThunk = createAsyncThunk(`auth/joinUserThunk`, async (userD
 export const loginUserThunk = createAsyncThunk(`auth/loginUserThunk`, async (credentials, { rejectWithValue }) => {
    try {
       const response = await loginUser(credentials)
-      return response
+      return response.data.user
    } catch (error) {
       return rejectWithValue(error.respon?.data?.message)
    }
@@ -26,7 +26,7 @@ export const loginUserThunk = createAsyncThunk(`auth/loginUserThunk`, async (cre
 export const logoutUserThunk = createAsyncThunk(`auth/logoutUserThunk`, async (_, { rejectWithValue }) => {
    try {
       const response = await logoutUser()
-      return response
+      return response.data
    } catch (error) {
       return rejectWithValue(error.respon?.data?.message)
    }
@@ -35,8 +35,8 @@ export const logoutUserThunk = createAsyncThunk(`auth/logoutUserThunk`, async (_
 // 상태확인
 export const checkAuthStatusThunk = createAsyncThunk(`auth/checkAuthStatusThunk`, async (_, { rejectWithValue }) => {
    try {
-      const response = await checkAuthStatus()
-      return response
+      const response = await logoutUser()
+      return response.data
    } catch (error) {
       return rejectWithValue(error.respon?.data?.message)
    }
@@ -89,7 +89,7 @@ const authSlice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(logoutUserThunk.fulfilled, (state, action) => {
+         .addCase(logoutUserThunk.fulfilled, (state) => {
             state.loading = false
             state.isAuthenticated = false
             state.user = null

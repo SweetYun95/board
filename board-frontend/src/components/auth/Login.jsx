@@ -1,17 +1,18 @@
-import { Container, TextField, Button, Typography, Box, Stack, Link } from '@mui/material'
+import { CircularProgress, Container, TextField, Button, Typography, Box, Link } from '@mui/material'
 
 import { useState } from 'react'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { loginUserThunk, clearAuthError } from '../../features/authSlice'
 
 function Login() {
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
-   const dispatch = useDispatch
+   const dispatch = useDispatch()
    const navigate = useNavigate()
+   const { loading, error } = useSelector((state) => state.auth)
 
    useEffect(() => {
       return () => {
@@ -41,21 +42,39 @@ function Login() {
                로그인
             </Typography>
 
-            <form onSubmit={handleSubmit}>
-               <Stack spacing={2}>
-                  <TextField label="이메일" variant="outlined" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
-                  <TextField label="비밀번호" variant="outlined" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
-                  <Button type="submit" variant="contained" fullWidth>
-                     로그인
-                  </Button>
+            {error && (
+               <Typography color="error" align="center">
+                  {error}
+               </Typography>
+            )}
 
-                  <Typography variant="body2" align="center">
-                     계정이 없으신가요?{' '}
-                     <Link component={RouterLink} to="/signup" underline="hover">
-                        회원가입
-                     </Link>
-                  </Typography>
-               </Stack>
+            <form onSubmit={handleSubmit}>
+               <TextField label="이메일" variant="outlined" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+
+               <TextField label="비밀번호" variant="outlined" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
+
+               <Button type="submit" variant="contained" fullWidth disabled={loading} sx={{ position: 'relative', marginTop: '20px' }}>
+                  {loading ? (
+                     <CircularProgress
+                        size={24}
+                        sx={{
+                           position: 'absolute',
+                           top: '50%',
+                           left: '50%',
+                           transform: 'translate(-50%, -50%)',
+                        }}
+                     />
+                  ) : (
+                     ' 로그인'
+                  )}
+               </Button>
+
+               <Typography variant="body2" align="center">
+                  계정이 없으신가요?{' '}
+                  <Link component={RouterLink} to="/signup" underline="hover">
+                     회원가입
+                  </Link>
+               </Typography>
             </form>
          </Box>
       </Container>

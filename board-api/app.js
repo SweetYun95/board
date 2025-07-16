@@ -3,26 +3,39 @@ const path = require(`path`)
 const cookieParser = require('cookie-parser') // 쿠키 처리 미들웨어
 const morgan = require(`morgan`)
 const session = require('express-session') // 세션 관리 미들웨어
+const passport = require(`passport`) // 인증 미들웨어
 require(`dotenv`).config()
-// const cors = require(`cors`) // cors 미들웨어 -> ★api 서버는 반드시 설정
+const cors = require(`cors`) // cors 미들웨어 -> ★api 서버는 반드시 설정
 
-// 라우터 모듈 불러올 곳
+// 라우터 및 모듈 불러올 곳
 const indexRouter = require('./routes/index')
+const authRouter = require('./routes/auth')
 const boardRouter = require('./routes/board')
 const memberRouter = require('./routes/member')
 const { sequelize } = require(`./models`)
+const passportConfig = require(`./passport/index`)
 
 const app = express()
+passportConfig()
 app.set(`port`, process.env.PORT || 3000)
 
 // 시퀼라이져 DB 연결 할 곳
-sequelize.sync({ force: false }).then(() => {
-   console.log(`시퀄라이즈로 DB연결 됨`)
-}).catch((err) => {
-   console.error('DB연결 실패',err)
-})
+sequelize
+   .sync({ force: false })
+   .then(() => {
+      console.log(`시퀄라이즈로 DB연결 됨`)
+   })
+   .catch((err) => {
+      console.error('DB연결 실패', err)
+   })
 
 // 공통 미들웨어
+app.use(
+   cors({
+      origin: `http://localhost:5173`, // 특정 주소만 request 허용(프론트엔드 주소)
+      credentials: true, // 쿠키, 세션 등 인증 정보 허용
+   })
+)
 app.use(morgan(`dev`))
 app.use(express.static(path.join(__dirname, `uploads`)))
 app.use(express.json()) // JSON 데이터 파싱
@@ -41,8 +54,14 @@ app.use(
       },
    })
 )
+
+// passport 초기화, 세션 연동
+app.use(passport.initialize()) // 초기화
+app.use(passport.session()) // passport와 생성해둔 세션 연결
+
 // 라우터 연결할 곳
 app.use('/', indexRouter)
+app.use(`/auth`, authRouter)
 app.use('/board', boardRouter)
 app.use('/member', memberRouter)
 

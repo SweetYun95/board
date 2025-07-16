@@ -4,7 +4,7 @@ module.exports = class Board extends Sequelize.Model {
    static init(sequelize) {
       return super.init(
          {
-            titel: {
+            title: {
                type: Sequelize.STRING(15),
                allowNull: false,
                unique: true,
