@@ -30,7 +30,7 @@ const boardSlice = createSlice({
    initialState: {
       boards: [],
       currentBoard: null,
-      status: 'idle',
+      loading: false,
       error: null,
    },
    reducers: {},
@@ -38,27 +38,25 @@ const boardSlice = createSlice({
       builder
          // 전체 게시글 조회
          .addCase(getBoards.pending, (state) => {
-            state.status = 'loading'
+            state.loading = true
+            state.error = null
          })
          .addCase(getBoards.fulfilled, (state, action) => {
-            state.status = 'succeeded'
+            state.loading = false
             state.boards = action.payload
          })
          .addCase(getBoards.rejected, (state, action) => {
-            state.status = 'failed'
+            state.loading = false
             state.error = action.error.message
          })
-
          // 게시글 단일 조회
          .addCase(getBoardById.fulfilled, (state, action) => {
             state.currentBoard = action.payload
          })
-
          // 게시글 등록
          .addCase(addBoard.fulfilled, (state, action) => {
             state.boards.unshift(action.payload.post) // 최신글 맨 위에 추가
          })
-
          // 게시글 삭제
          .addCase(removeBoard.fulfilled, (state, action) => {
             state.boards = state.boards.filter((board) => board.id !== action.payload)

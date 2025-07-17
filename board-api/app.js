@@ -45,7 +45,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET)) //쿠키 설정
 app.use(
    session({
       resave: false, //세션 데이터가 변경사항이 없어도 재저장 할지 여부 -> 변경사항이 있어야 재저장
-      saveUninitialized: true, //초기화 되지 않은 세션 저장 여부 -> 초기화 되지 않은 빈 세션도 저장
+      saveUninitialized: false, //초기화 되지 않은 세션 저장 여부 -> 초기화 되지 않은 빈 세션도 저장
       secret: process.env.COOKIE_SECRET, //세션 암호화 키
       cookie: {
          // maxAge를 설정하지 않으면 브라우저가 꺼지면 쿠키 삭제

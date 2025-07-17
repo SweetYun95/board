@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import LoginPage from './pages//LoginPage'
 import Signup from './pages/SignupPage'
 import PostPage from './pages/PostPage'
+import PostForm from './components/post/PostForm'
 import { checkAuthStatusThunk } from './features/authSlice'
 
 import './App.css'
@@ -28,6 +29,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/post" element={<PostPage />} />
+            <Route path="/posts/create" element={<PostForm />} />
          </Routes>
       </>
    )

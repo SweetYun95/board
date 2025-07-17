@@ -2,9 +2,9 @@ const express = require('express')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
-const router = express.Router()
 const { Board, Member } = require('../models')
 const { isLoggedIn } = require('./middleware') // 로그인 여부 검사용 미들웨어
+const router = express.Router()
 
 // uploads 폴더가 없을 경우 폴더 생성
 try {
@@ -33,12 +33,12 @@ const upload = multer({
 router.post('/', isLoggedIn, upload.single('image'), async (req, res, next) => {
    try {
       const { title, content } = req.body
-      const image = req.file?.filename
+      const image = req.file ? req.file.filename : null
 
       const newPost = await Board.create({
          title,
          content,
-         image,
+         img: image,
          member_Id: req.user.id,
       })
 
@@ -48,6 +48,7 @@ router.post('/', isLoggedIn, upload.single('image'), async (req, res, next) => {
          post: newPost,
       })
    } catch (error) {
+        console.error('게시글 등록 중 에러 발생:', error)
       next(error)
    }
 })
@@ -67,9 +68,9 @@ router.get('/', async (req, res, next) => {
 
       res.status(200).json(posts)
    } catch (err) {
+      console.error('게시글 등록 실패:', error)
       next(err)
    }
 })
-
 
 module.exports = router

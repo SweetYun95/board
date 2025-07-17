@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { getBoards, removeBoard } from '../../features/boardSlice'
 
-const PostList = () => {
+function PostList() {
    const dispatch = useDispatch()
    const { boards } = useSelector((state) => state.board)
 

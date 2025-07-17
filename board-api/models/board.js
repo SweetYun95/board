@@ -14,7 +14,7 @@ module.exports = class Board extends Sequelize.Model {
                allowNull: false,
             },
             img: {
-               type: Sequelize.STRING(15),
+               type: Sequelize.STRING(100),
                allowNull: true,
             },
          },

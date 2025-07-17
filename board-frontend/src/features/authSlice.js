@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { joinUser, loginUser, logoutUser,  } from '../api/boardApi'
+import { joinUser, loginUser, logoutUser, checkAuthStatus } from '../api/boardApi'
 
 // 회원가입
 export const joinUserThunk = createAsyncThunk(`auth/joinUserThunk`, async (userData, { rejectWithValue }) => {
@@ -8,7 +8,7 @@ export const joinUserThunk = createAsyncThunk(`auth/joinUserThunk`, async (userD
       const response = await joinUser(userData)
       return response.data.user
    } catch (error) {
-      return rejectWithValue(error.respon?.data?.message)
+        return rejectWithValue(error.response?.data?.message)
    }
 })
 
@@ -18,7 +18,7 @@ export const loginUserThunk = createAsyncThunk(`auth/loginUserThunk`, async (cre
       const response = await loginUser(credentials)
       return response.data.user
    } catch (error) {
-      return rejectWithValue(error.respon?.data?.message)
+        return rejectWithValue(error.response?.data?.message)
    }
 })
 
@@ -28,17 +28,17 @@ export const logoutUserThunk = createAsyncThunk(`auth/logoutUserThunk`, async (_
       const response = await logoutUser()
       return response.data
    } catch (error) {
-      return rejectWithValue(error.respon?.data?.message)
+     return rejectWithValue(error.response?.data?.message)
    }
 })
 
 // 상태확인
 export const checkAuthStatusThunk = createAsyncThunk(`auth/checkAuthStatusThunk`, async (_, { rejectWithValue }) => {
    try {
-      const response = await logoutUser()
+     const response = await checkAuthStatus()
       return response.data
    } catch (error) {
-      return rejectWithValue(error.respon?.data?.message)
+       return rejectWithValue(error.response?.data?.message)
    }
 })
 
