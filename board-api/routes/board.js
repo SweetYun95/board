@@ -23,11 +23,16 @@ const upload = multer({
       filename(req, file, done) {
          const ext = path.extname(file.originalname)
          const basename = path.basename(file.originalname, ext)
-         done(null, basename + '_' + Date.now() + ext)
+
+         // 💡 한글 파일명 깨짐 방지
+         const safeBaseName = Buffer.from(basename, 'utf-8').toString('hex')
+
+         done(null, `${safeBaseName}_${Date.now()}${ext}`)
       },
    }),
    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 제한
 })
+
 
 // 게시글 등록
 router.post('/', isLoggedIn, upload.single('image'), async (req, res, next) => {
@@ -48,7 +53,7 @@ router.post('/', isLoggedIn, upload.single('image'), async (req, res, next) => {
          post: newPost,
       })
    } catch (error) {
-        console.error('게시글 등록 중 에러 발생:', error)
+      console.error('게시글 등록 중 에러 발생:', error)
       next(error)
    }
 })
@@ -72,5 +77,45 @@ router.get('/', async (req, res, next) => {
       next(err)
    }
 })
+
+// 게시글 수정
+router.put('/:id', isLoggedIn, upload.single('image'), async (req, res, next) => {
+   try {
+      const { id } = req.params
+      const { title, content } = req.body
+      const post = await Board.findByPk(id)
+
+      // 게시글 존재 여부 확인
+      if (!post) {
+         return res.status(404).json({ success: false, message: '게시글이 존재하지 않습니다.' })
+      }
+
+      // 작성자 본인인지 확인
+      if (post.member_Id !== req.user.id) {
+         return res.status(403).json({ success: false, message: '수정 권한이 없습니다.' })
+      }
+
+      // 새 이미지가 업로드되었다면 기존 이미지 파일 제거 (옵션)
+      if (req.file && post.img) {
+         const oldImagePath = path.join(__dirname, '..', 'uploads', post.img)
+         if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath)
+         }
+      }
+
+      // 게시글 업데이트
+      await post.update({
+         title,
+         content,
+         img: req.file ? req.file.filename : post.img, // 새 이미지가 없으면 기존 이미지 유지
+      })
+
+      res.status(200).json({ success: true, message: '게시글이 수정되었습니다.', post })
+   } catch (error) {
+      console.error('게시글 수정 중 에러:', error)
+      next(error)
+   }
+})
+
 
 module.exports = router

@@ -37,7 +37,7 @@ app.use(
    })
 )
 app.use(morgan(`dev`))
-app.use(express.static(path.join(__dirname, `uploads`)))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json()) // JSON 데이터 파싱
 app.use(express.urlencoded({ extended: false })) // URL-encoded 데이터 파싱
 app.use(cookieParser(process.env.COOKIE_SECRET)) //쿠키 설정

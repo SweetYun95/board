@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { fetchBoards, fetchBoardById, createBoard, deleteBoard } from '../api/boardApi'
+import { fetchBoards, fetchBoardById, createBoard, deleteBoard, updateBoard } from '../api/boardApi'
+
 
 // 게시글 전체 조회
 export const getBoards = createAsyncThunk('board/getBoards', async () => {
@@ -17,6 +18,12 @@ export const getBoardById = createAsyncThunk('board/getBoardById', async (id) =>
 export const addBoard = createAsyncThunk('board/addBoard', async (formData) => {
    const response = await createBoard(formData)
    return response.data
+})
+
+// 게시글 수정
+export const editBoard = createAsyncThunk('board/editBoard', async ({ id, formData }) => {
+   const response = await updateBoard({ id, formData })
+   return response.data.post
 })
 
 // 게시글 삭제
@@ -56,6 +63,17 @@ const boardSlice = createSlice({
          // 게시글 등록
          .addCase(addBoard.fulfilled, (state, action) => {
             state.boards.unshift(action.payload.post) // 최신글 맨 위에 추가
+         })
+         // 게시글 수정
+         .addCase(editBoard.fulfilled, (state, action) => {
+            const updatedPost = action.payload
+            const index = state.boards.findIndex((board) => board.id === updatedPost.id)
+            if (index !== -1) {
+               state.boards[index] = updatedPost
+            }
+            if (state.currentBoard && state.currentBoard.id === updatedPost.id) {
+               state.currentBoard = updatedPost
+            }
          })
          // 게시글 삭제
          .addCase(removeBoard.fulfilled, (state, action) => {

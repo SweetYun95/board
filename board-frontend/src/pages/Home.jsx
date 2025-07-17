@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getBoards, removeBoard } from '../features/boardSlice'
 import { useSelector as useAuthSelector } from 'react-redux'
 import { Card, CardContent, Typography, Button, Pagination, Stack } from '@mui/material'
-import PostForm from '../components/post/PostForm'
+
 function Home() {
    const dispatch = useDispatch()
    const { boards, loading } = useSelector((state) => state.board)
