@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getBoardById } from '../../features/boardSlice'
 import { updateBoard } from '../../api/boardApi'
 
-const PostEdit = () => {
+const PostEdit = ({ handleSubmit }) => {
    const { id } = useParams()
    const dispatch = useDispatch()
    const navigate = useNavigate()
@@ -28,23 +28,6 @@ const PostEdit = () => {
 
    const handleImageChange = (e) => {
       setImage(e.target.files[0])
-   }
-
-   const handleSubmit = async (e) => {
-      e.preventDefault()
-      const formData = new FormData()
-      formData.append('title', title)
-      formData.append('content', content)
-      if (image) formData.append('image', image)
-
-      try {
-         await updateBoard({ id, formData })
-         alert('게시글이 수정되었습니다.')
-         navigate('/')
-      } catch (error) {
-         console.error('게시글 수정 실패:', error)
-         alert('게시글 수정 중 오류가 발생했습니다.')
-      }
    }
 
    return (

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { addBoard } from '../../features/boardSlice'
 
-const PostForm = () => {
+function PostForm() {
    const navigate = useNavigate()
    const dispatch = useDispatch()
    const [title, setTitle] = useState('')
