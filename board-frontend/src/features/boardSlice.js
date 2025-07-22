@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { fetchBoards, fetchBoardById, createBoard, deleteBoard, updateBoard } from '../api/boardApi'
 
-
 // 게시글 전체 조회
 export const getBoards = createAsyncThunk('board/getBoards', async () => {
    const response = await fetchBoards()

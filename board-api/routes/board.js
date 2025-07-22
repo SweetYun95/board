@@ -33,7 +33,6 @@ const upload = multer({
    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 제한
 })
 
-
 // 게시글 등록
 router.post('/', isLoggedIn, upload.single('image'), async (req, res, next) => {
    try {
@@ -117,5 +116,35 @@ router.put('/:id', isLoggedIn, upload.single('image'), async (req, res, next) =>
    }
 })
 
+// 게시글 삭제
+router.delete('/:id', isLoggedIn, async (req, res, next) => {
+   try {
+      const { id } = req.params
+      const post = await Board.findByPk(id)
+
+      if (!post) {
+         return res.status(404).json({ success: false, message: '게시글이 존재하지 않습니다.' })
+      }
+
+      if (post.member_Id !== req.user.id) {
+         return res.status(403).json({ success: false, message: '삭제 권한이 없습니다.' })
+      }
+
+      // 이미지 파일도 함께 삭제 (선택)
+      if (post.img) {
+         const imagePath = path.join(__dirname, '..', 'uploads', post.img)
+         if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath)
+         }
+      }
+
+      await post.destroy()
+
+      res.status(200).json({ success: true, message: '게시글이 삭제되었습니다.' })
+   } catch (error) {
+      console.error('게시글 삭제 중 에러:', error)
+      next(error)
+   }
+})
 
 module.exports = router
