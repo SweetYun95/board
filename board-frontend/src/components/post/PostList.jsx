@@ -37,7 +37,8 @@ function PostList({ boards }) {
                <Box
                   key={post.id}
                   sx={{
-                     flex: '1 1 300px', // 최소 300px, 그 이상은 공간에 맞게 자동 확장
+                  
+                     margin: '0 auto',
                      maxWidth: '100%',
                      display: 'flex',
                   }}
