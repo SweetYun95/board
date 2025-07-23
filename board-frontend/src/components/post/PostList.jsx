@@ -1,4 +1,3 @@
-// src/components/post/PostList.jsx
 import { Card, CardMedia, CardContent, CardActions, Typography, Button, Grid } from '@mui/material'
 import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -31,7 +30,7 @@ function PostList({ boards }) {
             const imageUrl = `${import.meta.env.VITE_APP_API_URL}/uploads/${post.img}`
 
             return (
-               <Grid item xs={12} md={6} key={post.id}>
+               <Grid key={post.id} sx={{ width: { xs: '100%', md: '50%' }, boxSizing: 'border-box' }}>
                   <Card sx={{ maxWidth: '100%' }}>
                      {post.img && <CardMedia component="img" height="240" image={imageUrl} alt={post.title} />}
 

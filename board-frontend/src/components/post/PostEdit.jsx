@@ -1,54 +1,42 @@
-import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { TextField, Button, Box, Typography, Stack, Paper } from '@mui/material'
 
-import { getBoardById } from '../../features/boardSlice'
-import { updateBoard } from '../../api/boardApi'
-
-const PostEdit = ({ handleSubmit }) => {
-   const { id } = useParams()
-   const dispatch = useDispatch()
-   const navigate = useNavigate()
-   const { currentBoard } = useSelector((state) => state.board)
-
-   const [title, setTitle] = useState('')
-   const [content, setContent] = useState('')
-   const [image, setImage] = useState(null)
-
-   useEffect(() => {
-      dispatch(getBoardById(id))
-   }, [dispatch, id])
-
-   useEffect(() => {
-      if (currentBoard) {
-         setTitle(currentBoard.title)
-         setContent(currentBoard.content)
-      }
-   }, [currentBoard])
-
+function PostEdit({ handleSubmit, title, setTitle, content, setContent, image, setImage, preview, setPreview, currentImageUrl }) {
    const handleImageChange = (e) => {
-      setImage(e.target.files[0])
+      const file = e.target.files[0]
+      setImage(file)
+      if (file) {
+         setPreview(URL.createObjectURL(file))
+      } else {
+         setPreview(null)
+      }
    }
 
+   const showPreview = preview || currentImageUrl
+
    return (
-      <div style={{ maxWidth: '600px', margin: '2rem auto' }}>
-         <h2>게시글 수정</h2>
-         <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <div>
-               <label>제목</label>
-               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            </div>
-            <div>
-               <label>내용</label>
-               <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={5} required />
-            </div>
-            <div>
-               <label>이미지 선택</label>
-               <input type="file" accept="image/*" onChange={handleImageChange} />
-            </div>
-            <button type="submit">수정하기</button>
-         </form>
-      </div>
+      <Paper elevation={3} sx={{ p: 3 }}>
+         <Typography variant="h6" gutterBottom>
+            게시글 수정
+         </Typography>
+         <Box component="form" onSubmit={handleSubmit} encType="multipart/form-data">
+            <Stack spacing={2}>
+               <TextField label="제목" value={title} onChange={(e) => setTitle(e.target.value)} required />
+               <TextField label="내용" multiline rows={4} value={content} onChange={(e) => setContent(e.target.value)} required />
+               <Button variant="contained" component="label">
+                  이미지 수정
+                  <input type="file" name="image" hidden accept="image/*" onChange={handleImageChange} />
+               </Button>
+               {showPreview && (
+                  <Box sx={{ mt: 2 }}>
+                     <img src={showPreview} alt="미리보기" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: 8 }} />
+                  </Box>
+               )}
+               <Button type="submit" variant="contained" color="primary">
+                  수정
+               </Button>
+            </Stack>
+         </Box>
+      </Paper>
    )
 }
 
