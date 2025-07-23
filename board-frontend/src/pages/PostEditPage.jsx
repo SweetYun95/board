@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
 import { Container } from '@mui/material'
+import { useParams, useNavigate } from 'react-router-dom'
 
-import { getBoardById, editBoard } from '../features/boardSlice'
 import PostEdit from '../components/post/PostEdit'
+import { getBoardById, editBoard } from '../features/boardSlice'
 
 const PostEditPage = () => {
    const { id } = useParams()
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const { currentBoard } = useSelector((state) => state.board)
+
+   const currentBoard = useSelector((state) => state.board.currentBoard)
 
    const [title, setTitle] = useState('')
    const [content, setContent] = useState('')
@@ -25,7 +26,12 @@ const PostEditPage = () => {
       if (currentBoard) {
          setTitle(currentBoard.title)
          setContent(currentBoard.content)
-         setPreview(null) // 기존 이미지도 보여줄 거라 여기선 초기화만
+
+         // 기존 이미지 미리보기 설정
+         if (currentBoard.img) {
+            const imageUrl = `${import.meta.env.VITE_APP_API_URL}/uploads/${currentBoard.img}`
+            setPreview(imageUrl)
+         }
       }
    }, [currentBoard])
 
@@ -46,24 +52,9 @@ const PostEditPage = () => {
       }
    }
 
-   const currentImageUrl = currentBoard?.img
-      ? `${import.meta.env.VITE_APP_API_URL}/uploads/${currentBoard.img}`
-      : null
-
    return (
       <Container maxWidth="sm" sx={{ mt: 5 }}>
-         <PostEdit
-            handleSubmit={handleSubmit}
-            title={title}
-            setTitle={setTitle}
-            content={content}
-            setContent={setContent}
-            image={image}
-            setImage={setImage}
-            preview={preview}
-            setPreview={setPreview}
-            currentImageUrl={currentImageUrl} // 전달
-         />
+         <PostEdit handleSubmit={handleSubmit} title={title} setTitle={setTitle} content={content} setContent={setContent} image={image} setImage={setImage} preview={preview} setPreview={setPreview} />
       </Container>
    )
 }

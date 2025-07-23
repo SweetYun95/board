@@ -147,4 +147,31 @@ router.delete('/:id', isLoggedIn, async (req, res, next) => {
    }
 })
 
+// 게시글 단일 조회
+router.get('/:id', async (req, res, next) => {
+   try {
+      const { id } = req.params
+
+      const post = await Board.findOne({
+         where: { id },
+         include: [
+            {
+               model: Member,
+               attributes: ['id', 'name', 'email'],
+            },
+         ],
+      })
+
+      if (!post) {
+         return res.status(404).json({ success: false, message: '게시글을 찾을 수 없습니다.' })
+      }
+
+      res.status(200).json(post)
+   } catch (error) {
+      console.error('게시글 조회 중 에러:', error)
+      next(error)
+   }
+})
+
+
 module.exports = router

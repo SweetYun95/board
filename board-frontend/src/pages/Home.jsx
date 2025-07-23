@@ -10,7 +10,7 @@ function Home() {
    const dispatch = useDispatch()
    const { boards, loading } = useSelector((state) => state.board)
    const [page, setPage] = useState(1)
-   const perPage = 3
+   const perPage = 12 // ⭐페이지당 게시물 수
 
    useEffect(() => {
       dispatch(getBoards())
@@ -19,7 +19,7 @@ function Home() {
    const pagedBoards = boards.slice((page - 1) * perPage, page * perPage)
 
    return (
-      <Container sx={{ mt: 5 }}>
+      <Container sx={{ mt: 5, mb: 5 }}>
          <Typography variant="h4" gutterBottom>
             게시판
          </Typography>
