@@ -1,7 +1,7 @@
 import { Container } from '@mui/material'
 
 import PostEdit from '../components/post/PostEdit'
-import { editBoard } from '../../features/boardSlice'
+import { editBoard } from '../features/boardSlice'
 
 const PostEditPage = () => {
 
